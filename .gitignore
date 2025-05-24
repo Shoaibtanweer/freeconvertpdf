@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build artifacts (if any)
+dist/
+build/
+
+# Log files
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env*.local
+.env.*.local
+!.env.example # Keep the example file in repo
+
+# Uploaded and processed files (if stored locally and not meant for repo)
+uploads/
+processed/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editor directories
+.idea/
+.vscode/
+*.swp
+*~

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Email</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md text-center">
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Email Verification</h2>
+        <p id="message" class="text-gray-600 dark:text-gray-300">Verifying your email...</p>
+        <a href="login.html" id="loginLink" class="hidden mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Login</a>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const messageEl = document.getElementById('message');
+            const loginLink = document.getElementById('loginLink');
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+
+            if (!token) {
+                messageEl.textContent = 'Verification token not found.';
+                messageEl.className = 'text-red-500';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/verifyemail/${token}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Verification failed.');
+                }
+                messageEl.textContent = data.message || 'Email verified successfully!';
+                messageEl.className = 'text-green-500';
+                loginLink.classList.remove('hidden');
+
+            } catch (error) {
+                messageEl.textContent = error.message || 'An error occurred during verification.';
+                messageEl.className = 'text-red-500';
+            }
+        });
+    </script>
+</body>
+</html>

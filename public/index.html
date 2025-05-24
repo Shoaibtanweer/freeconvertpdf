@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" class=""> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>freeConvertPDF - Free PDF Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+   
+    <script>
+        // Tailwind dark mode configuration
+        tailwind.config = {
+            darkMode: 'class', // or 'media'
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;,">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Basic scrollbar styling for dark mode (from your style.css) */
+        .dark ::-webkit-scrollbar {
+            width: 8px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #2d3748; /* dark:gray-800 */
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4a5568; /* dark:gray-600 */
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #718096; /* dark:gray-500 */
+        }
+        /* File preview image (from your style.css) */
+        .file-preview-img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+        }
+        /* Animation for drag-over (from your style.css) */
+        .drag-over {
+            border-style: solid;
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        /* Custom spinner (from your style.css) */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Styles for button container on mobile (as provided by you) */
+        @media (max-width: 640px) { /* Targets small screens (mobile) */
+            .button-container {
+                display: flex;
+                flex-direction: column; /* Stack buttons vertically */
+                align-items: center; /* Center buttons in the container */
+                width: 100%;
+                /* padding: 0 1rem; */ /* Optional: Add padding if buttons seem too wide */
+            }
+            
+            .button-container button {
+                width: 100%; /* Make buttons full width */
+                max-width: 320px; /* Optional: set a max-width for very wide buttons */
+                margin-left: auto;  /* Center the button if max-width is applied */
+                margin-right: auto; /* Center the button if max-width is applied */
+                margin-bottom: 0.75rem; /* Add space below each button (12px) */
+            }
+    
+            .button-container button:last-child {
+                margin-bottom: 0; /* No margin for the last button */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+
+    <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="text-2xl font-bold text-blue-600 dark:text-blue-400">freeConvertPDF</a>
+
+                <nav class="hidden md:flex items-center space-x-4">
+                    <div class="relative" id="tools-dropdown-container">
+                        <button id="tools-dropdown-button" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Tools <i class="fas fa-chevron-down fa-xs ml-1"></i>
+                        </button>
+                        <div id="tools-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 py-1 z-50 max-h-60 overflow-y-auto">
+                            </div>
+                    </div>
+
+                    <button id="dark-mode-toggle" class="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none">
+                        <i class="fas fa-moon"></i> <i class="fas fa-sun hidden"></i> </button>
+
+                    <a href="login.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Login</a>
+                    <a href="register.html" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">Register</a>
+                </nav>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-800">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <button id="mobile-tools-dropdown-button" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    Tools <i class="fas fa-chevron-down fa-xs ml-1"></i>
+                </button>
+                <div id="mobile-tools-dropdown-menu" class="hidden pl-4 max-h-48 overflow-y-auto">
+                     </div>
+                <a href="login.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Login</a>
+                <a href="register.html" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">Register</a>
+                 <button id="mobile-dark-mode-toggle" class="w-full text-left mt-2 px-3 py-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none">
+                    <i class="fas fa-moon inline-block mr-2"></i> Dark Mode
+                    <i class="fas fa-sun hidden inline-block mr-2"></i> Light Mode
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <section class="text-center py-12">
+            <h1 class="text-4xl sm:text-5xl font-bold text-blue-600 dark:text-blue-400 mb-4">The Ultimate PDF Conversion Hub</h1>
+            <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+                Easily convert your documents, images, spreadsheets, and more to PDF format. Fast, free, and secure. One-stop solution for all your PDF needs.
+            </p>
+        </section>
+
+        <section id="tools-section" class="py-12">
+            <h2 class="text-3xl font-semibold text-center mb-10 text-gray-800 dark:text-gray-200">Our Conversion Tools</h2>
+            <div id="tools-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+        </section>
+
+        <section id="upload-section" class="py-12 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 md:p-10 my-10" style="scroll-margin-top: 100px;">
+            <h2 id="upload-section-title" class="text-2xl font-semibold text-center mb-8 text-gray-800 dark:text-gray-200">Select a Tool Above to Get Started</h2>
+
+            <div id="processing-indicator" class="hidden w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 my-4">
+                <div id="processing-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+            <p id="processing-message" class="text-center text-sm text-gray-600 dark:text-gray-400 hidden"></p>
+
+            <div id="loading-spinner" class="hidden loader"></div>
+
+
+            <div id="drag-drop-area" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 md:p-12 text-center cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
+                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 dark:text-gray-500 mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400">Drag & drop files here or</p>
+                <label for="file-input" class="mt-2 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 cursor-pointer transition-colors">
+                    Choose Files
+                </label>
+                <input type="file" id="file-input" name="files" multiple class="hidden">
+                <p id="file-types-info" class="text-sm text-gray-400 dark:text-gray-500 mt-2"></p>
+            </div>
+
+            <div id="file-preview-area" class="mt-6 space-y-3">
+                </div>
+
+            <div id="conversion-options" class="mt-6 hidden">
+                 <div class="mb-4">
+                    <label for="output-pdf-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Output PDF Name (Optional)</label>
+                    <input type="text" id="output-pdf-name" placeholder="e.g., my_converted_document" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100">
+                </div>
+
+                <button id="convert-button" class="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors text-lg flex items-center justify-center">
+                    <i class="fas fa-cogs mr-2"></i> Convert to PDF
+                </button>
+            </div>
+
+            <div id="result-section" class="mt-6 text-center hidden">
+                <p id="conversion-success-message" class="text-green-600 dark:text-green-400 mb-4 text-lg"></p>
+                <div class="button-container"> 
+                    <button id="download-pdf-button" class="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-download mr-2"></i> Download PDF
+                    </button>
+                    <button id="clear-button" class="px-8 py-3 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition-colors">
+                        <i class="fas fa-trash-alt mr-2"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 dark:bg-black text-gray-300 dark:text-gray-400 py-8 text-center">
+        <p>&copy; <span id="current-year"></span> freeConvertPDF. All Rights Reserved.</p>
+        <p class="text-sm">Developed by Shoaib Tanweer</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

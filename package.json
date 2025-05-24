@@ -1,0 +1,44 @@
+{
+  "name": "freeconvertpdf",
+  "version": "1.0.0",
+  "description": "A web application for converting various file formats to PDF.",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "client": "echo \"No client script specified. Serve public/index.html\"",
+    "dev": "nodemon backend/server.js"
+  },
+  "keywords": [
+    "pdf",
+    "converter",
+    "file conversion"
+  ],
+  "author": "Shoaib Tanweer",
+  "license": "ISC",
+  "dependencies": {
+    "@kenjiuno/msgreader": "^1.22.0",
+    "@sendgrid/mail": "^8.1.5",
+    "adm-zip": "^0.5.16",
+    "bcryptjs": "^2.4.3",
+    "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
+    "fs-extra": "^11.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "libreoffice-convert": "^1.6.1",
+    "mailparser": "^3.7.2",
+    "mongoose": "^8.14.3",
+    "multer": "^1.4.5-lts.1",
+    "pdf-lib": "^1.17.1",
+    "puppeteer": "^24.8.2",
+    "sharp": "^0.34.1",
+    "string": "^3.3.3"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "dotenv": "^16.5.0",
+    "nodemon": "^3.1.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.6"
+  }
+}
